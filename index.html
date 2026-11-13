@@ -1,1 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>WildNote — Student Nature Journal &amp; Field Guide</title>
+<style>
+  :root {
+    /* Calm Forest & Cream Palette */
+    --bg: #f4f7f2;
+    --surface: #ffffff;
+    --surface-soft: #f8fbf7;
+    --ink: #16241b;
+    --muted: #4f6356;
+    --border: #d6e2d4;
+    --shadow: 0 6px 20px rgba(18, 48, 29, 0.07);
+    --shadow-md: 0 10px 28px rgba(15, 42, 24, 0.12);
 
+    /* Primary Forest Brand */
+    --forest-900: #113d24;
+    --forest-800: #165331;
+    --forest-700: #1b6b3f;
+    --forest-600: #22844e;
+    --forest-100: #e5f5ec;
+
+    /* 5 Color-Coded Guided Field Question Tokens (Q1 - Q5) */
+    --q1-bg: #e8f6ee; --q1-bd: #86efac; --q1-tx: #14532d; --q1-badge: #15803d;
+    --q2-bg: #fef7e6; --q2-bd: #fcd34d; --q2-tx: #92400e; --q2-badge: #b45309;
+    --q3-bg: #eef2ff; --q3-bd: #a5b4fc; --q3-tx: #3730a3; --q3-badge: #4338ca;
+    --q4-bg: #f0fdfa; --q4-bd: #5eead4; --q4-tx: #115e59; --q4-badge: #0f766e;
+    --q5-bg: #fff1f2; --q5-bd: #fda4af; --q5-tx: #9f1239; --q5-badge: #be123c;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    padding-bottom: 48px;
+  }
+
+  /* ================= STICKY HEADER ================= */
+  header {
+    background: linear-gradient(135deg, var(--forest-900) 0%, var(--forest-800) 60%, var(--forest-700) 100%);
+    color: #ffffff;
+    padding: 12px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    box-shadow: 0 4px 16px rgba(17, 61, 36, 0.22);
+  }
+
+  .header-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .brand-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+
+  .brand-text h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.18rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 0.2px;
+  }
+
+  .brand-text span {
+    display: block;
+    font-size: 0.72rem;
+    color: #cde8d6;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .btn-download {
+    background: #facc15;
+    color: #113820;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.22);
+    transition: transform 0.14s ease, background 0.14s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .btn-download:hover { background: #fde047; }
+  .btn-download:active { transform: scale(0.96); }
+
+  /* ================= MAIN SINGLE-PAGE CONTAINER ================= */
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 14px 14px 0;
+  }
+
+  /* Backup Reminder Strip */
+  .offline-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: #e7f6ed;
+    border: 1px solid #bce3ca;
+    color: var(--forest-900);
+    padding: 8px 13px;
+    border-radius: 14px;
+    font-size: 0.78rem;
+    margin-bottom: 12px;
+  }
+
+  .offline-strip strong { font-weight: 800; }
+
+  .link-save-inline {
+    background: none;
+    border: none;
+    color: var(--forest-700);
+    font-weight: 800;
+    text-decoration: underline;
+    font-size: 0.78rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  /* ================= 1. STUDENT PROFILE SWITCHER ================= */
+  .profiles-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 2px 2px 12px;
+    scrollbar-width: none;
+  }
+  .profiles-strip::-webkit-scrollbar { display: none; }
+
+  .profile-pill {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    padding: 6px 13px 6px 7px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.16s ease;
+  }
+
+  .profile-pill.active {
+    border-color: var(--forest-600);
+    background: var(--forest-100);
+    box-shadow: 0 4px 12px rgba(34, 132, 78, 0.15);
+  }
+
+  .pill-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    color: #fff;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .pill-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .pill-name {
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--ink);
+  }
+
+  .pill-count {
+    font-size: 0.72rem;
+    font-weight: 800;
+    background: var(--border);
+    color: var(--muted);
+    padding: 1px 7px;
+    border-radius: 99px;
+  }
+
+  .profile-pill.active .pill-count {
+    background: var(--forest-600);
+    color: #fff;
+  }
+
+  .btn-new-student {
+    flex: 0 0 auto;
+    height: 44px;
+    padding: 0 15px;
+    border-radius: 999px;
+    border: 2px dashed #6cc095;
+    background: #edf8f1;
+    color: var(--forest-800);
+    font-weight: 800;
+    font-size: 0.84rem;
+    cursor: pointer;
+  }
+
+  /* ================= 2. ACTIVE STUDENT PROFILE CARD & INLINE DRAWER ================= */
+  .student-card {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+
+  .student-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .student-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  .student-photo-box {
+    width: 68px;
+    height: 68px;
+    border-radius: 20px;
+    display: grid;
+    place-items: center;
+    font-size: 32px;
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .student-photo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .photo-cam-badge {
+    position: absolute;
+    bottom: 2
+
+  
